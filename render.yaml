@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: desert-bazaar-duel-v5
+    runtime: node
+    buildCommand: npm ci --no-audit --no-fund
+    startCommand: npm start
+    plan: free
+    envVars:
+      - key: NODE_VERSION
+        value: 22.x

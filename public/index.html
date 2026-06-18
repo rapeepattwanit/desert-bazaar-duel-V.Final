@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#241335">
+  <title>Desert Bazaar Duel — Mobile Online</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="ambient"></div>
+  <main class="shell">
+    <section id="lobby" class="screen lobby">
+      <div class="brand-card glass">
+        <p class="eyebrow">mobile online • 2 players</p>
+        <h1>Desert<br>Bazaar Duel</h1>
+        <p class="lead">สุดยอดบอร์ดเกมค้าขาย Online ที่มียอดดาวโหลดมากกว่า 1ล้านชุด</p>
+        <div class="rule-pills">
+          <span>สร้างห้อง</span><span>ส่งลิงก์</span><span>เล่นสด</span><span>มีคู่มือ</span>
+        </div>
+        <div class="hero-actions">
+          <button id="guideBtnLobby" class="ghost">อ่านคู่มือการเล่น</button>
+          <button id="settingsBtnLobby" class="ghost">⚙️ Setting</button>
+        </div>
+      </div>
+
+      <div class="join-card glass">
+        <div id="inviteNotice" class="notice hidden">พบรหัสห้องจากลิงก์แล้ว เปลี่ยนชื่อก่อนกดเข้าได้เลย</div>
+        <label>ชื่อผู้เล่น</label>
+        <input id="nameInput" placeholder="เช่น โอ๊ต" maxlength="18" autocomplete="nickname">
+        <button id="createBtn" class="primary big">สร้างห้องใหม่</button>
+        <div class="divider"><span>หรือ</span></div>
+        <label>รหัสห้อง</label>
+        <div class="join-row">
+          <input id="roomInput" placeholder="เช่น A7K2Q" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="latin" maxlength="8">
+          <button id="joinBtn" class="secondary">เข้า</button>
+        </div>
+        <p class="hint">ถ้าเพื่อนส่งลิงก์มา ระบบจะเติมรหัสห้องให้อัตโนมัติ แต่คุณยังแก้ชื่อก่อนเข้าห้องได้</p>
+        <p id="connectionText" class="connection">กำลังเชื่อมต่อ...</p>
+      </div>
+    </section>
+
+    <section id="guide" class="screen guide hidden">
+      <div class="guide-card glass">
+        <div class="guide-head">
+          <div>
+            <p class="eyebrow small">how to play</p>
+            <h2>คู่มือการเล่น Desert Bazaar Duel</h2>
+          </div>
+          <div class="guide-actions">
+            <button id="backFromGuideBtn" class="secondary">กลับ</button>
+            <button id="homeFromGuideBtn" class="ghost">Home</button>
+          </div>
+        </div>
+
+        <div class="guide-grid">
+          <article>
+            <h3>เป้าหมาย</h3>
+            <p>สะสมคะแนนจากการขายสินค้าให้ได้มากกว่าคู่แข่งในแต่ละรอบ ผู้ชนะรอบจะได้ตราชัย 1 อัน ใครได้ตราชัยครบ 2 อันก่อนชนะเกม</p>
+          </article>
+          <article>
+            <h3>ใน 1 เทิร์นทำได้ 1 อย่าง</h3>
+            <ol>
+              <li>หยิบสินค้า 1 ใบจากตลาด</li>
+              <li>เก็บอูฐทั้งหมดในตลาดเข้าฝูงอูฐ</li>
+              <li>แลกการ์ดในมือ/อูฐกับการ์ดในตลาด จำนวนต้องเท่ากันอย่างน้อย 2 ใบ</li>
+              <li>ขายสินค้าชนิดเดียวกันเพื่อรับเหรียญคะแนน</li>
+            </ol>
+          </article>
+          <article>
+            <h3>ข้อจำกัดสำคัญ</h3>
+            <ul>
+              <li>ไพ่สินค้าในมือมีได้ไม่เกิน 7 ใบ</li>
+              <li>อูฐอยู่ในฝูงอูฐ ไม่ถือเป็นไพ่สินค้าในมือ</li>
+              <li>เพชร ทอง เงิน เป็นสินค้าพรีเมียม ต้องขายอย่างน้อย 2 ใบ</li>
+            </ul>
+          </article>
+          <article>
+            <h3>คะแนนและโบนัส</h3>
+            <p>ขายสินค้าเร็วจะได้เหรียญคะแนนสูงกว่า และถ้าขายทีละเยอะจะได้ bonus token แบบคว่ำหน้า คะแนนจริงจะเปิดเผยตอนจบรอบ:</p>
+            <ul>
+              <li>ขาย 3 ใบ ได้ bonus token จากกอง 3 ใบ 1 เหรียญ</li>
+              <li>ขาย 4 ใบ ได้ bonus token จากกอง 4 ใบ 1 เหรียญ</li>
+              <li>ขาย 5 ใบขึ้นไป เช่น 5, 6 หรือ 7 ใบ ได้ bonus token จากกอง 5+ ใบ 1 เหรียญ</li>
+              <li>คะแนน bonus token จะถูกซ่อนไว้ระหว่างเล่น เพื่อให้ลุ้นตอนจบรอบ</li>
+              <li>ท้ายรอบ คนที่มีอูฐมากกว่าจะได้คะแนนพิเศษ 5 แต้ม</li>
+            </ul>
+          </article>
+          <article>
+            <h3>เกมจบรอบเมื่อไหร่</h3>
+            <p>รอบจะจบเมื่อกองการ์ดหมด หรือกองเหรียญสินค้าหมด 3 ชนิด จากนั้นระบบนับคะแนนและเริ่มรอบใหม่อัตโนมัติ</p>
+          </article>
+          <article>
+            <h3>ทิปสั้น ๆ</h3>
+            <p>อย่าเก็บของแพงไว้นานเกินไป เพราะคู่แข่งอาจขายก่อนและหยิบเหรียญคะแนนสูงไปก่อน ส่วนอูฐช่วยให้แลกตลาดครั้งใหญ่ได้ดี</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="game" class="screen game hidden">
+      <header class="topbar glass">
+        <div>
+          <p class="eyebrow small">รอบ <span id="round">1</span></p>
+          <h2>ห้อง <span id="roomCode">-</span></h2>
+        </div>
+        <div class="top-actions">
+          <button id="homeBtn" class="ghost">Home</button>
+          <button id="guideBtnGame" class="ghost">คู่มือ</button>
+          <button id="settingsBtn" class="ghost">⚙️ Setting</button>
+          <button id="copyInviteBtn" class="ghost">คัดลอกลิงก์</button>
+          <button id="restartBtn" class="danger">เริ่มใหม่</button>
+        </div>
+      </header>
+
+      <section id="statusBar" class="status glass">กำลังโหลด...</section>
+
+      <section class="score-strip" id="playersBox"></section>
+
+      <section class="board-layout">
+        <aside class="side glass">
+          <h3>เหรียญสินค้า</h3>
+          <div id="tokenStacks" class="tokens"></div>
+          <h3 class="log-title">บันทึกเกม</h3>
+          <div id="logBox" class="log"></div>
+        </aside>
+
+        <section class="play-area">
+          <div class="panel glass market-panel">
+            <div class="section-title">
+              <span>ตลาดกลาง</span>
+              <small>สำรับเหลือ <b id="deckCount">0</b> ใบ</small>
+            </div>
+            <div id="marketCards" class="cards market-cards"></div>
+            <button id="takeCamelsBtn" class="secondary full">เก็บอูฐทั้งหมดในตลาด</button>
+          </div>
+
+          <div class="panel glass hand-panel">
+            <div class="section-title">
+              <span>มือของคุณ</span>
+              <small id="handCountText">0/7</small>
+            </div>
+            <div id="handCards" class="cards hand-cards"></div>
+            <div id="herdBox" class="herd"></div>
+          </div>
+
+          <div class="panel glass action-panel">
+            <div class="section-title"><span>คำสั่ง</span><small>แตะการ์ดเพื่อเลือก</small></div>
+            <div class="quick-action-box">
+              <p id="selectionHint" class="selection-hint">แตะการ์ดสินค้าในตลาดเพื่อหยิบทันที หรือเลือกไพ่ในมือก่อนเพื่อแลก</p>
+              <button id="takeOneBtn" class="secondary full" disabled>หยิบสินค้า 1 ใบ</button>
+            </div>
+            <div class="trade-box priority-trade">
+              <p>แลก: เลือกการ์ดในมือ/อูฐที่จะให้ และเลือกการ์ดตลาดที่จะรับ จำนวนต้องเท่ากันอย่างน้อย 2 ใบ</p>
+              <div class="camel-trade">
+                <button id="minusCamel" class="ghost mini">−</button>
+                <span>ใช้อูฐแลก <b id="camelTradeCount">0</b> ใบ</span>
+                <button id="plusCamel" class="ghost mini">+</button>
+              </div>
+              <div class="action-row">
+                <button id="tradeBtn" class="primary">แลกเปลี่ยน</button>
+                <button id="clearBtn" class="ghost">ล้างเลือก</button>
+              </div>
+            </div>
+            <div id="sellBox" class="sell-box"></div>
+          </div>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <div id="turnPopup" class="turn-popup hidden" role="dialog" aria-live="polite">
+    <div class="turn-card glass">
+      <div class="turn-icon">🔔</div>
+      <h2>ถึงตาคุณแล้ว</h2>
+      <p>เลือกการกระทำของคุณได้เลย</p>
+      <button id="closeTurnPopupBtn" class="primary big">เล่นต่อ</button>
+    </div>
+  </div>
+
+
+  <div id="settingsPopup" class="modal-popup hidden" role="dialog" aria-live="polite">
+    <div class="settings-card glass">
+      <div class="modal-head">
+        <div>
+          <p class="eyebrow small">settings</p>
+          <h2>ตั้งค่าเกม</h2>
+        </div>
+        <button id="closeSettingsBtn" class="ghost mini">ปิด</button>
+      </div>
+
+      <div class="settings-list sound-settings">
+        <div class="settings-section-title">เสียงทั้งหมด</div>
+        <label class="range-row sound-row">
+          <span>Master sound <b id="masterVolumeText">5</b>/5</span>
+          <input id="masterVolume" type="range" min="0" max="5" step="1" value="5">
+          <label class="inline-toggle"><input id="masterSoundToggle" type="checkbox" checked> เปิดเสียงทั้งหมด</label>
+        </label>
+
+        <div class="settings-section-title">เสียง Effect</div>
+        <label class="range-row sound-row">
+          <span>เสียง effect ทั้งหมด <b id="effectsVolumeText">5</b>/5</span>
+          <input id="effectsVolume" type="range" min="0" max="5" step="1" value="5">
+          <label class="inline-toggle"><input id="effectsSoundToggle" type="checkbox" checked> เปิดเสียง effect</label>
+        </label>
+
+
+        <div class="settings-section-title">เสียงแจ้งเตือนถึงตาคุณ</div>
+        <label class="range-row sound-row">
+          <span>เสียงแจ้งเตือน <b id="notificationVolumeText">5</b>/5</span>
+          <input id="notificationVolume" type="range" min="0" max="5" step="1" value="5">
+          <label class="inline-toggle"><input id="notificationSoundToggle" type="checkbox" checked> เปิดเสียงแจ้งเตือน</label>
+        </label>
+
+        <div class="settings-section-title">เสียงเพลงพื้นหลัง</div>
+        <label class="range-row sound-row">
+          <span>เสียงเพลงพื้นหลัง <b id="musicVolumeText">5</b>/5</span>
+          <input id="musicVolume" type="range" min="0" max="5" step="1" value="5">
+          <label class="inline-toggle"><input id="musicSoundToggle" type="checkbox" checked> เปิดเพลงพื้นหลัง</label>
+        </label>
+
+        <label class="switch-row">
+          <span>แสดงหน้าจอแจ้งเตือนเมื่อถึงตาคุณ</span>
+          <input id="turnPopupToggle" type="checkbox" checked>
+        </label>
+      </div>
+
+      <div class="settings-actions">
+        <button id="settingsBackGameBtn" class="secondary">กลับไปหน้าเกม</button>
+        <button id="testNotificationBtn" class="ghost">ทดสอบเสียงแจ้งเตือน</button>
+        <button id="settingsCopyInviteBtn" class="ghost">คัดลอกลิงก์เข้าห้อง</button>
+        <button id="settingsHomeBtn" class="danger">Home</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="roundPopup" class="modal-popup hidden" role="dialog" aria-live="polite">
+    <div class="winner-card glass result-card">
+      <div class="winner-icon">🏵️</div>
+      <h2 id="roundTitle">คุณชนะรอบนี้</h2>
+      <p id="roundDetailText">ผู้ชนะรอบ: -</p>
+      <div id="roundScoreText" class="winner-score">คะแนนรอบ: P1 0 - 0 P2</div>
+      <details id="roundDetails" class="score-details">
+        <summary>ดูรายละเอียดคะแนน</summary>
+        <div id="roundDetailsBody" class="score-details-body"></div>
+      </details>
+      <div class="winner-actions">
+        <button id="roundNextBtn" class="primary big">เริ่มรอบต่อไป</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="winnerPopup" class="modal-popup hidden" role="dialog" aria-live="polite">
+    <div class="winner-card glass result-card">
+      <div id="winnerIcon" class="winner-icon">🏆</div>
+      <h2 id="winnerTitle">ยินดีด้วยคุณคือผู้ชนะ</h2>
+      <p id="winnerDetail">ผู้ชนะ: -</p>
+      <div id="winnerScoreText" class="winner-score">คะแนนตราชัย 2-0</div>
+      <p id="winnerRoundScoreText" class="muted">คะแนนรอบสุดท้าย: -</p>
+      <details id="winnerDetails" class="score-details">
+        <summary>ดูรายละเอียดคะแนน</summary>
+        <div id="winnerDetailsBody" class="score-details-body"></div>
+      </details>
+      <div class="winner-actions">
+        <button id="winnerRestartBtn" class="primary big">เริ่มใหม่</button>
+        <button id="winnerNewRoomBtn" class="secondary big">สร้างห้องใหม่</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
