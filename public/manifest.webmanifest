@@ -1,0 +1,31 @@
+{
+  "name": "Desert Bazaar Duel",
+  "short_name": "Bazaar Duel",
+  "description": "Desert Bazaar Duel Mobile Online — เกมค้าขายออนไลน์สำหรับผู้เล่น 2 คน",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#241335",
+  "theme_color": "#241335",
+  "icons": [
+    {
+      "src": "/icons/app-icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

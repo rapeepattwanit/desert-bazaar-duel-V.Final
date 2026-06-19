@@ -18,6 +18,7 @@ let roundPopupShownFor = null;
 let winnerPopupShownFor = null;
 let audioUnlockNoticeShown = false;
 let turnNotificationTimer = null;
+let pageIsActive = !document.hidden;
 
 const CARD_TYPES = ['diamond', 'gold', 'silver', 'cloth', 'spice', 'leather', 'camel'];
 const isCoarsePointer = window.matchMedia?.('(hover: none) and (pointer: coarse)')?.matches ?? false;
@@ -202,8 +203,19 @@ function canPlayEffects() {
 function canPlayNotification() {
   return userInteracted && masterRatio() > 0 && notificationRatio() > 0;
 }
+function isGameFinished() {
+  return !!(state && (state.winner != null || state.lastRoundScore?.gameOver === true));
+}
+
 function canPlayMusic() {
-  return userInteracted && state && currentView === 'game' && masterRatio() > 0 && musicRatio() > 0 && (!isCoarsePointer || cardImagesReady);
+  return userInteracted
+    && pageIsActive
+    && state
+    && currentView === 'game'
+    && !isGameFinished()
+    && masterRatio() > 0
+    && musicRatio() > 0
+    && (!isCoarsePointer || cardImagesReady);
 }
 
 function preloadEffects() {
@@ -332,7 +344,7 @@ function updateBackgroundMusicState() {
     startBackgroundMusic();
   } else {
     stopBackgroundMusic();
-    if (isCoarsePointer && userInteracted && state && currentView === 'game' && !cardImagesReady && !mobileMusicRetryTimer) {
+    if (isCoarsePointer && userInteracted && state && currentView === 'game' && !isGameFinished() && !cardImagesReady && !mobileMusicRetryTimer) {
       mobileMusicRetryTimer = setTimeout(() => {
         mobileMusicRetryTimer = null;
         cardImagesReady = true;
@@ -341,6 +353,25 @@ function updateBackgroundMusicState() {
     }
   }
 }
+
+function refreshPageActivity() {
+  pageIsActive = document.visibilityState !== 'hidden' && !document.hidden;
+  updateBackgroundMusicState();
+}
+
+document.addEventListener('visibilitychange', refreshPageActivity);
+window.addEventListener('pageshow', refreshPageActivity);
+window.addEventListener('focus', refreshPageActivity);
+window.addEventListener('pagehide', () => {
+  pageIsActive = false;
+  stopBackgroundMusic();
+});
+window.addEventListener('blur', () => {
+  if (document.hidden) {
+    pageIsActive = false;
+    stopBackgroundMusic();
+  }
+});
 
 function saveSettings() {
   settings.masterVolume = clamp($('masterVolume').value, 0, 5);
@@ -674,6 +705,7 @@ function showRoundPopup(s, r) {
 }
 
 function showWinnerPopup(s, r) {
+  stopBackgroundMusic();
   const iWon = r.finalWinner === s.you;
   $('winnerIcon').textContent = iWon ? '🏆' : '🏳️';
   $('winnerTitle').textContent = iWon ? 'ยินดีด้วยคุณคือผู้ชนะ' : 'คุณเป็นฝ่ายพ่ายแพ้';
