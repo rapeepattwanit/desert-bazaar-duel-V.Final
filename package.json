@@ -1,6 +1,6 @@
 {
   "name": "desert-bazaar-duel-mobile-online",
-  "version": "5.2.1",
+  "version": "5.2.2",
   "description": "A polished mobile-friendly 2-player online trading card board game with hidden bonus tokens, safer multiplayer reconnect, and responsive UI.",
   "main": "server.js",
   "scripts": {

@@ -19,6 +19,54 @@ let winnerPopupShownFor = null;
 let audioUnlockNoticeShown = false;
 let turnNotificationTimer = null;
 
+const CARD_TYPES = ['diamond', 'gold', 'silver', 'cloth', 'spice', 'leather', 'camel'];
+const isCoarsePointer = window.matchMedia?.('(hover: none) and (pointer: coarse)')?.matches ?? false;
+const cardImageWarmup = new Map();
+let cardImagesReady = false;
+let cardImagePreloadPromise = null;
+let mobileMusicRetryTimer = null;
+
+function cardImagePaths(cardType, goodsInfo = {}) {
+  const safeType = CARD_TYPES.includes(cardType) ? cardType : 'camel';
+  const fallback = goodsInfo.image && goodsInfo.image.endsWith('.png')
+    ? goodsInfo.image
+    : `/assets/cards/${safeType}.png`;
+  return {
+    primary: `/assets/cards/${safeType}.webp`,
+    fallback
+  };
+}
+
+function preloadSingleCardImage(cardType) {
+  if (cardImageWarmup.has(cardType)) return cardImageWarmup.get(cardType);
+  const { primary, fallback } = cardImagePaths(cardType);
+  const promise = new Promise(resolve => {
+    const img = new Image();
+    img.decoding = 'async';
+    img.onload = () => resolve(primary);
+    img.onerror = () => {
+      const png = new Image();
+      png.decoding = 'async';
+      png.onload = () => resolve(fallback);
+      png.onerror = () => resolve(null);
+      png.src = fallback;
+    };
+    img.src = primary;
+  });
+  cardImageWarmup.set(cardType, promise);
+  return promise;
+}
+
+function preloadCardImages() {
+  if (cardImagePreloadPromise) return cardImagePreloadPromise;
+  cardImagePreloadPromise = Promise.allSettled(CARD_TYPES.map(preloadSingleCardImage))
+    .finally(() => {
+      cardImagesReady = true;
+      updateBackgroundMusicState();
+    });
+  return cardImagePreloadPromise;
+}
+
 const BACKGROUND_TRACKS = [
   '/assets/audio/casino-jazz-1.mp3'
 ];
@@ -155,7 +203,7 @@ function canPlayNotification() {
   return userInteracted && masterRatio() > 0 && notificationRatio() > 0;
 }
 function canPlayMusic() {
-  return userInteracted && state && currentView === 'game' && masterRatio() > 0 && musicRatio() > 0;
+  return userInteracted && state && currentView === 'game' && masterRatio() > 0 && musicRatio() > 0 && (!isCoarsePointer || cardImagesReady);
 }
 
 function preloadEffects() {
@@ -239,7 +287,7 @@ function startBackgroundMusic() {
   bgStarted = true;
   if (!bgAudio) {
     bgAudio = new Audio();
-    bgAudio.preload = 'auto';
+    bgAudio.preload = isCoarsePointer ? 'metadata' : 'auto';
     bgAudio.loop = false;
   }
   const playRandomTrack = () => {
@@ -276,8 +324,22 @@ function stopBackgroundMusic() {
 
 function updateBackgroundMusicState() {
   updateBackgroundVolume();
-  if (canPlayMusic()) startBackgroundMusic();
-  else stopBackgroundMusic();
+  if (canPlayMusic()) {
+    if (mobileMusicRetryTimer) {
+      clearTimeout(mobileMusicRetryTimer);
+      mobileMusicRetryTimer = null;
+    }
+    startBackgroundMusic();
+  } else {
+    stopBackgroundMusic();
+    if (isCoarsePointer && userInteracted && state && currentView === 'game' && !cardImagesReady && !mobileMusicRetryTimer) {
+      mobileMusicRetryTimer = setTimeout(() => {
+        mobileMusicRetryTimer = null;
+        cardImagesReady = true;
+        updateBackgroundMusicState();
+      }, 2500);
+    }
+  }
 }
 
 function saveSettings() {
@@ -456,11 +518,14 @@ function cardElement(cardType, index, where) {
   const art = document.createElement('span');
   art.className = 'art';
   const img = document.createElement('img');
-  img.loading = 'lazy';
+  const { primary, fallback } = cardImagePaths(cardType, g);
+  img.loading = 'eager';
+  img.decoding = 'async';
+  img.draggable = false;
+  if ('fetchPriority' in img) img.fetchPriority = where === 'market' ? 'high' : 'auto';
   img.alt = g.name || cardType;
-  img.src = g.image || `/assets/cards/${cardType}.png`;
+  img.src = primary;
   img.onerror = () => {
-    const fallback = `/assets/cards/${cardType}.png`;
     if (!img.dataset.fallbackTried && img.src !== new URL(fallback, location.origin).href) {
       img.dataset.fallbackTried = '1';
       img.src = fallback;
@@ -526,10 +591,13 @@ function renderSelectionsOnly() {
   updateActionPanel();
 }
 function renderCards() {
-  $('marketCards').innerHTML = '';
-  state.market.forEach((c, i) => $('marketCards').appendChild(cardElement(c, i, 'market')));
-  $('handCards').innerHTML = '';
-  state.yourHand.forEach((c, i) => $('handCards').appendChild(cardElement(c, i, 'hand')));
+  const marketFrag = document.createDocumentFragment();
+  state.market.forEach((c, i) => marketFrag.appendChild(cardElement(c, i, 'market')));
+  $('marketCards').replaceChildren(marketFrag);
+
+  const handFrag = document.createDocumentFragment();
+  state.yourHand.forEach((c, i) => handFrag.appendChild(cardElement(c, i, 'hand')));
+  $('handCards').replaceChildren(handFrag);
 }
 
 function updateActionPanel() {
@@ -778,5 +846,6 @@ $('minusCamel').onclick = () => {
 };
 $('tradeBtn').onclick = () => action({ type: 'trade', handIdx: selectedHand, takeIdx: selectedMarket, camelCount: camelTradeCount });
 
+preloadCardImages();
 updateSettingsUi();
 connect();

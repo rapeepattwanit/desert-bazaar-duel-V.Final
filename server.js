@@ -8,7 +8,13 @@ const publicDir = path.join(__dirname, 'public');
 app.use(express.static(publicDir, {
   extensions: ['html'],
   etag: true,
-  maxAge: process.env.NODE_ENV === 'production' ? '1h' : 0
+  maxAge: process.env.NODE_ENV === 'production' ? '1h' : 0,
+  setHeaders(res, filePath) {
+    const normalized = filePath.split(path.sep).join('/');
+    if (normalized.includes('/public/assets/cards/') || normalized.includes('/public/assets/audio/effects/')) {
+      res.setHeader('Cache-Control', 'public, max-age=604800, immutable');
+    }
+  }
 }));
 app.get('/health', (_req, res) => res.status(200).send('ok'));
 app.get('/', (_req, res) => res.sendFile(path.join(publicDir, 'index.html')));
@@ -21,13 +27,13 @@ const DISCONNECT_GRACE_MS = 1000 * 60 * 12;
 const ROOM_TTL_MS = 1000 * 60 * 60 * 6;
 
 const goods = {
-  diamond: { name: 'เพชรฟ้า', emoji: '💎', image: '/assets/cards/diamond.png', premium: true },
-  gold: { name: 'ทองสุริยัน', emoji: '🏵️', image: '/assets/cards/gold.png', premium: true },
-  silver: { name: 'เงินจันทรา', emoji: '⚪', image: '/assets/cards/silver.png', premium: true },
-  cloth: { name: 'ผ้าไหม', emoji: '🧵', image: '/assets/cards/cloth.png', premium: false },
-  spice: { name: 'เครื่องเทศ', emoji: '🌶️', image: '/assets/cards/spice.png', premium: false },
-  leather: { name: 'เครื่องหนัง', emoji: '🟤', image: '/assets/cards/leather.png', premium: false },
-  camel: { name: 'อูฐ', emoji: '🐪', image: '/assets/cards/camel.png', premium: false }
+  diamond: { name: 'เพชรฟ้า', emoji: '💎', image: '/assets/cards/diamond.webp', premium: true },
+  gold: { name: 'ทองสุริยัน', emoji: '🏵️', image: '/assets/cards/gold.webp', premium: true },
+  silver: { name: 'เงินจันทรา', emoji: '⚪', image: '/assets/cards/silver.webp', premium: true },
+  cloth: { name: 'ผ้าไหม', emoji: '🧵', image: '/assets/cards/cloth.webp', premium: false },
+  spice: { name: 'เครื่องเทศ', emoji: '🌶️', image: '/assets/cards/spice.webp', premium: false },
+  leather: { name: 'เครื่องหนัง', emoji: '🟤', image: '/assets/cards/leather.webp', premium: false },
+  camel: { name: 'อูฐ', emoji: '🐪', image: '/assets/cards/camel.webp', premium: false }
 };
 
 const counts = { diamond: 6, gold: 6, silver: 6, cloth: 8, spice: 8, leather: 10, camel: 11 };
